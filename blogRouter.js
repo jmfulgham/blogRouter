@@ -13,7 +13,7 @@ app.use(morgan('common'));
 //create a couple blog posts
 
 BlogPosts.create('Hi I am a blog post. Sup?');
-BlogPosts.create(`Hey, I am another blog post. What's 
+BlogPosts.create(`Hey, I am another blog post. What\'\s 
 happenin?`);
 
 
@@ -23,16 +23,58 @@ app.get('/blog-posts', (req, res)=>{
     res.json(BlogPosts.get());
 });
 
-app.post('/blog-posts', (req, res)=>{
-    
+app.post('/blog-posts', jsonParser, (req, res)=>{
+    const requiredFields=['id','title','publishDate'];
+    for (let i=0; i<requiredFields.length; i++){
+        const field=requiredFields[i];
+        if (!(field in req.body)){
+            const message = `Missing ${field} in blog post request body`;
+            console.error(message);
+            return res.status(400).send(message);
+        }
+
+        console.log(`Creating your blog!`);
+        const newPost= BlogPosts.create(req.body.id, req.body.title, req.body.publishDate);
+        res.status(201).json(newPost);
+    }
+
+   
 });
 
-app.put('/blog-posts/:id', (req,res)=>{
+app.put('/blog-posts/:id', jsonParser, (req,res)=>{
+    const requiredFields=['id', 'title','publishDate'];
+    for (let i=0; i < requiredFields.length; i++){
+        const field=requiredFields[i];
+        if (!(field in req.body)) {
+            const message= `Missing ${field} in your request body`;
+            console.error(message);
+            return res.status(400).send(message);
+        }
+    }
+    if (req.params.id !== req.body.id){
+        const message=`Request path id ${req.params.id} must match
+        ${req.body.id}`;
+        console.error(message);
+        return res.status(400).send(message);
+    }
 
+    console.log(`Updating the blog post ${req.params.id} now`)
+    BlogPosts.update({
+        id: req.params.id,
+        title:req.body.title,
+        publishDate:req.body.publishDate
+    });
+    res.status(204).end();
 });
 
 app.delete('/blog-posts/:id', (req,res)=>{
+BlogPosts.delete(req.params.id);
+console.log(`I, ${req.params.id} have been deleted`);
+res.status(204).end();
 
 });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
+console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
+
+module.exports= router;
