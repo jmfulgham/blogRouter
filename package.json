@@ -1,24 +1,22 @@
 {
   "name": "blogrouter",
   "version": "1.0.0",
-  "description": "Blog Router Exercise (Express, Node.js)",
+  "description": "",
   "main": "blogRouter.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node blogRouter.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jmfulgham/blogRouter.git"
   },
-  "keywords": [
-    "Express",
-    "Nodejs",
-    "Node.js",
-    "Javascript",
-    "API",
-    "Postman"
-  ],
-  "author": "Mone't Fulgham",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jmfulgham/blogRouter/issues"
