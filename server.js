@@ -4,13 +4,13 @@ const morgan = require('morgan');
 const app = express();
 
 const blogRouter= require(`./blogRouter`);
-app.use('/blog-posts', blogRouter);
+app.use('/', blogRouter);
 app.use(morgan('common'));
 
 let server;
 
 function runServer(){
-  const port= process.env.PORT || 8081;
+  const port= process.env.PORT || 8080;
   return new Promise((resolve,reject)=>{
     server =app.listen(port, ()=>{
       console.log(`Your app is listening on port ${port}`);
