@@ -24,7 +24,7 @@ app.get('/blog-posts', (req, res)=>{
 });
 
 app.post('/blog-posts', jsonParser, (req, res)=>{
-    const requiredFields=['id','title','publishDate'];
+    const requiredFields=['title'];
     for (let i=0; i<requiredFields.length; i++){
         const field=requiredFields[i];
         if (!(field in req.body)){
@@ -34,7 +34,8 @@ app.post('/blog-posts', jsonParser, (req, res)=>{
         }
 
         console.log(`Creating your blog!`);
-        const newPost= BlogPosts.create(req.body.id, req.body.title, req.body.publishDate);
+        const newPost= BlogPosts.create(req.body.title, req.body.content, 
+            req.body.author, req.body.publishDate);
         res.status(201).json(newPost);
     }
 
@@ -73,8 +74,9 @@ console.log(`I, ${req.params.id} have been deleted`);
 res.status(204).end();
 
 });
-
-app.listen(process.env.PORT || 8080, process.env.IP);
-console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-
+if (process.env.NODE_ENV != 'test') {
+    console.log('hahahahaha',process.env.NODE_ENV);
+ app.listen(process.env.PORT || 8080, process.env.IP);
+ console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
+}
 module.exports= router;

@@ -21,8 +21,8 @@ const BlogPosts = {
       id: uuid.v4(),
       title: title,
       content: content,
-      author: author,
-      publishDate: publishDate || Date.now()
+      author: author || `Mone't`,
+      publishDate: publishDate || new Date(Date.now()).getDay()
     };
     this.posts.push(post);
     return post;
