@@ -19,11 +19,11 @@ happenin?`);
 
 //handle the initial requests
 
-app.get('/blog-posts', (req, res)=>{
+router.get('/blog-posts', (req, res)=>{
     res.json(BlogPosts.get());
 });
 
-app.post('/blog-posts', jsonParser, (req, res)=>{
+router.post('/blog-posts', jsonParser, (req, res)=>{
     const requiredFields=['title'];
     for (let i=0; i<requiredFields.length; i++){
         const field=requiredFields[i];
@@ -42,7 +42,7 @@ app.post('/blog-posts', jsonParser, (req, res)=>{
    
 });
 
-app.put('/blog-posts/:id', jsonParser, (req,res)=>{
+router.put('/blog-posts/:id', jsonParser, (req,res)=>{
     const requiredFields=['id', 'title','publishDate'];
     for (let i=0; i < requiredFields.length; i++){
         const field=requiredFields[i];
@@ -68,15 +68,17 @@ app.put('/blog-posts/:id', jsonParser, (req,res)=>{
     res.status(204).end();
 });
 
-app.delete('/blog-posts/:id', (req,res)=>{
+router.delete('/blog-posts/:id', (req,res)=>{
+
 BlogPosts.delete(req.params.id);
 console.log(`I, ${req.params.id} have been deleted`);
 res.status(204).end();
 
 });
+
 if (process.env.NODE_ENV != 'test') {
-    console.log('hahahahaha',process.env.NODE_ENV);
  app.listen(process.env.PORT || 8080, process.env.IP);
  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
 }
+
 module.exports= router;
