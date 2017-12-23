@@ -5,6 +5,7 @@ const bodyParser= require('body-parser');
 const jsonParser=bodyParser.json();
 const app= express();
 
+
 //need to figure out how the include models
 const {BlogPosts}= require('./models')
 // log the http layer
@@ -12,15 +13,15 @@ app.use(morgan('common'));
 
 //create a couple blog posts
 
-BlogPosts.create('Hi I am a blog post. Sup?');
-BlogPosts.create(`Hey, I am another blog post. What\'\s 
-happenin?`);
-
+BlogPosts.create('Hi I am a blog post. Sup?',"We need more testing","So here it is");
+BlogPosts.create(`Hey, I am another blog post. What's happenin?`, 'You good?', "Yup, we chillin");
+//console.log(BlogPosts);
 
 //handle the initial requests
 
 router.get('/blog-posts', (req, res)=>{
     res.json(BlogPosts.get());
+    
 });
 
 router.post('/blog-posts', jsonParser, (req, res)=>{
@@ -43,7 +44,7 @@ router.post('/blog-posts', jsonParser, (req, res)=>{
 });
 
 router.put('/blog-posts/:id', jsonParser, (req,res)=>{
-    const requiredFields=['id', 'title','publishDate'];
+    const requiredFields=['id', 'title'];
     for (let i=0; i < requiredFields.length; i++){
         const field=requiredFields[i];
         if (!(field in req.body)) {
@@ -76,9 +77,9 @@ res.status(204).end();
 
 });
 
-if (process.env.NODE_ENV != 'test') {
- app.listen(process.env.PORT || 8080, process.env.IP);
- console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-}
+// if (process.env.NODE_ENV != 'test') {
+//  app.listen(process.env.PORT || 8080, process.env.IP);
+//  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
+// }
 
 module.exports= router;
