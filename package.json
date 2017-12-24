@@ -2,7 +2,7 @@
   "name": "blogrouter",
   "version": "1.0.0",
   "description": "",
-  "main": "blogRouter.js",
+  "main": "server.js",
   "dependencies": {
     "express": "^4.16.2",
     "morgan": "^1.9.0",
