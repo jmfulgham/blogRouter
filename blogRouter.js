@@ -77,9 +77,6 @@ res.status(204).end();
 
 });
 
-// if (process.env.NODE_ENV != 'test') {
-//  app.listen(process.env.PORT || 8080, process.env.IP);
-//  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-// }
+
 
 module.exports= router;
