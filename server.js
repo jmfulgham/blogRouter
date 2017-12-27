@@ -1,26 +1,44 @@
+//All required dependencies 
 const express = require('express');
-const morgan = require('morgan');
-
 const app = express();
+const morgan = require('morgan');
+const mongoose= require('mongoose');
 
+//setting up Mongoose promise style
+mongoose.Promise = global.Promise;
+
+//importing variables from other files
+const {PORT, DATABASE_URL}= require('./config');
+const {Blog}= require('./models');
 const blogRouter= require(`./blogRouter`);
+
+//routing and HTTP request settings
 app.use('/', blogRouter);
 app.use(morgan('common'));
 
+//starting the server
 let server;
 
-function runServer(){
-  const port= process.env.PORT || 8080;
+function runServer(databaseUrl=DATABASE_URL, port=PORT){
   return new Promise((resolve,reject)=>{
-    server =app.listen(port, ()=>{
+    mongoose.connect(databaseUrl, {useMongoClient: true}, err =>{
+      console.log(databaseUrl);
+      if (err){
+        return reject(err);
+      }
+    server = app.listen(port, ()=>{
       console.log(`Your app is listening on port ${port}`);
-      resolve(server);
-    }).on('error',err=>{
-      reject(err)
+      resolve();
+    })
+    .on('error',err=>{
+      mongoose.disconnect();
+      reject(err);
     });
   });
+});
 }
 
+//closing the server
 function closeServer() {
   return new Promise((resolve, reject) => {
     console.log('Closing server');
@@ -35,8 +53,9 @@ function closeServer() {
   });
 }
 
+
 if (require.main === module) {
   runServer().catch(err => console.error(err));
 };
-
+//exporting the server
 module.exports = {app, runServer, closeServer};

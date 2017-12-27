@@ -4,28 +4,41 @@ const morgan= require('morgan');
 const bodyParser= require('body-parser');
 const jsonParser=bodyParser.json();
 const app= express();
-
-
-//need to figure out how the include models
-const {BlogPosts}= require('./models')
-// log the http layer
-app.use(morgan('common'));
-
-//create a couple blog posts
-
-BlogPosts.create('Hi I am a blog post. Sup?',"We need more testing","So here it is");
-BlogPosts.create(`Hey, I am another blog post. What's happenin?`, 'You good?', "Yup, we chillin");
-//console.log(BlogPosts);
+app.use(morgan('common'));//should this be router.use?
+const {Blog}= require('./models')
+const uuid = require('uuid');
 
 //handle the initial requests
 
 router.get('/blog-posts', (req, res)=>{
-    res.json(BlogPosts.get());
-    
+    Blog
+    .find()
+    .then(blog=>{
+        res.json({
+            blog: blog.map(
+                (blog)=>blog.serialize())
+        });
+    })
+   
+    .catch (err => {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+    });
 });
 
+router.get('/blog-posts/:id', (req, res)=>{
+    Blog
+    .findById(req.params.id)
+    .then(blog =>
+    res.json(blog.serialize()))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' });
+        });
+    });
+
 router.post('/blog-posts', jsonParser, (req, res)=>{
-    const requiredFields=['title'];
+    const requiredFields=['title', 'content'];
     for (let i=0; i<requiredFields.length; i++){
         const field=requiredFields[i];
         if (!(field in req.body)){
@@ -33,18 +46,18 @@ router.post('/blog-posts', jsonParser, (req, res)=>{
             console.error(message);
             return res.status(400).send(message);
         }
-
-        console.log(`Creating your blog!`);
-        const newPost= BlogPosts.create(req.body.title, req.body.content, 
-            req.body.author, req.body.publishDate);
-        res.status(201).json(newPost);
+        Blog.create({
+            id: uuid.v4(),
+            title: req.body.title,
+            content: req.body.content,
+            author: req.body.author,
+            created: req.body.create
+        });
     }
-
-   
 });
 
 router.put('/blog-posts/:id', jsonParser, (req,res)=>{
-    const requiredFields=['id', 'title'];
+    const requiredFields=['id'];
     for (let i=0; i < requiredFields.length; i++){
         const field=requiredFields[i];
         if (!(field in req.body)) {
@@ -61,10 +74,11 @@ router.put('/blog-posts/:id', jsonParser, (req,res)=>{
     }
 
     console.log(`Updating the blog post ${req.params.id} now`)
-    BlogPosts.update({
+    Blog.update({
         id: req.params.id,
         title:req.body.title,
-        publishDate:req.body.publishDate
+        content:req.body.content,
+        created:req.body.created
     });
     res.status(204).end();
 });
@@ -77,9 +91,5 @@ res.status(204).end();
 
 });
 
-// if (process.env.NODE_ENV != 'test') {
-//  app.listen(process.env.PORT || 8080, process.env.IP);
-//  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-// }
 
 module.exports= router;
