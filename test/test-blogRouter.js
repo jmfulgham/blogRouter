@@ -5,15 +5,15 @@ const {app, runServer, closeServer}= require('../server');
 const should=chai.should();
 chai.use(chaiHttp);
 
-const {BlogPosts}= require('../models')
+const blog= require('../models')
 
 
-BlogPosts.create('Hi I am a blog post. Sup?');
-BlogPosts.create(`Hey, I am another blog post. What\'\s 
+blog.create('Hi I am a blog post. Sup?');
+blog.create(`Hey, I am another blog post. What\'\s 
 happenin?`);
 
 
-describe('BlogPosts',function(){
+describe('blog',function(){
     before(function(){
         return runServer();
     });
