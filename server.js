@@ -12,6 +12,7 @@ const {PORT, DATABASE_URL}= require('./config');
 const blog= require('./models');
 const blogRouter= require(`./blogRouter`);
 
+
 //routing and HTTP request settings
 app.use('/', blogRouter);
 app.use(morgan('common'));
