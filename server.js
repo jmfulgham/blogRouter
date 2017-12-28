@@ -9,7 +9,7 @@ mongoose.Promise = global.Promise;
 
 //importing variables from other files
 const {PORT, DATABASE_URL}= require('./config');
-const {Blog}= require('./models');
+const blog= require('./models');
 const blogRouter= require(`./blogRouter`);
 
 //routing and HTTP request settings
@@ -22,7 +22,7 @@ let server;
 function runServer(databaseUrl=DATABASE_URL, port=PORT){
   return new Promise((resolve,reject)=>{
     mongoose.connect(databaseUrl, {useMongoClient: true}, err =>{
-      console.log(databaseUrl);
+      console.log('my dburl is: ', databaseUrl);
       if (err){
         return reject(err);
       }
@@ -33,6 +33,7 @@ function runServer(databaseUrl=DATABASE_URL, port=PORT){
     .on('error',err=>{
       mongoose.disconnect();
       reject(err);
+      console.log(err);
     });
   });
 });

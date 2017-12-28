@@ -1,9 +1,9 @@
 const uuid = require('uuid');
 const mongoose= require('mongoose');
-
+const Schema = mongoose.Schema;
 
 const blogSchema =  mongoose.Schema({
-  id: { type: String, required: true}, //uuid.v4() how to make sure this still generates?
+  
   title: { type: String, required: true },
   content: { type: String, required: true },
   author: {
@@ -24,6 +24,6 @@ blogSchema.methods.serialize = function () {
   };
 }
 
-const Blog = mongoose.model('Blog', blogSchema);
+const blog = mongoose.model('blog', blogSchema);
 
-module.exports = { Blog };
+module.exports = blog;

@@ -4,21 +4,29 @@ const morgan= require('morgan');
 const bodyParser= require('body-parser');
 const jsonParser=bodyParser.json();
 const app= express();
-app.use(morgan('common'));//should this be router.use?
-const {Blog}= require('./models')
+router.use(morgan('common'));
+const blog= require('./models');
 const uuid = require('uuid');
 
 //handle the initial requests
 
 router.get('/blog-posts', (req, res)=>{
-    Blog
-    .find()
-    .then(blog=>{
-        res.json({
-            blog: blog.map(
-                (blog)=>blog.serialize())
-        });
-    })
+    blog
+        .find((error, blog) => {
+            if (error) {
+                next(error);
+            }
+            else { console.log(blog) };
+
+        })
+        .then(blog => {
+            res.json({
+                blog: blog.map(function(blog){
+                    return blog;
+                })
+                   
+            });
+        })
    
     .catch (err => {
         console.error(err);
@@ -27,7 +35,7 @@ router.get('/blog-posts', (req, res)=>{
 });
 
 router.get('/blog-posts/:id', (req, res)=>{
-    Blog
+    blog
     .findById(req.params.id)
     .then(blog =>
     res.json(blog.serialize()))
@@ -38,7 +46,7 @@ router.get('/blog-posts/:id', (req, res)=>{
     });
 
 router.post('/blog-posts', jsonParser, (req, res)=>{
-    const requiredFields=['title', 'content'];
+    const requiredFields=['title', 'content','author'];
     for (let i=0; i<requiredFields.length; i++){
         const field=requiredFields[i];
         if (!(field in req.body)){
@@ -46,14 +54,20 @@ router.post('/blog-posts', jsonParser, (req, res)=>{
             console.error(message);
             return res.status(400).send(message);
         }
-        Blog.create({
-            id: uuid.v4(),
+    }
+        const newBlog= new  blog ({
+            id: req.body.id,
             title: req.body.title,
             content: req.body.content,
             author: req.body.author,
             created: req.body.create
         });
-    }
+
+        newBlog.save((error) => { 
+            if (error) { console.log(error); }
+             else { console.log('success'); 
+                  }
+        }); 
 });
 
 router.put('/blog-posts/:id', jsonParser, (req,res)=>{
@@ -74,7 +88,7 @@ router.put('/blog-posts/:id', jsonParser, (req,res)=>{
     }
 
     console.log(`Updating the blog post ${req.params.id} now`)
-    Blog.update({
+    blog.update({
         id: req.params.id,
         title:req.body.title,
         content:req.body.content,
@@ -85,7 +99,7 @@ router.put('/blog-posts/:id', jsonParser, (req,res)=>{
 
 router.delete('/blog-posts/:id', (req,res)=>{
 
-BlogPosts.delete(req.params.id);
+blog.delete(req.params.id);
 console.log(`I, ${req.params.id} have been deleted`);
 res.status(204).end();
 
